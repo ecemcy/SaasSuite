@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Use the project-level README for NuGet display instead of the root README -->
+	<ItemGroup>
+		<None Remove="..\..\README.md" />
+		<None Include="README.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
+
+	<!-- Package references
+		 - Keep versions in package references for reproducible builds.
+		 - StyleCop.Analyzers is marked PrivateAssets=all so analyzers are not published with the package. -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="StyleCop.Analyzers">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<!-- Explicit global usings
+		 - These are applied as global usings for this project only.
+		 - Keep them minimal and only include namespaces used widely across the project. -->
+	<ItemGroup>
+		<Using Include="System" />
+		<Using Include="System.Collections.Generic" />
+		<Using Include="System.IO" />
+		<Using Include="System.Linq" />
+		<Using Include="System.Net.Http" />
+		<Using Include="System.Threading" />
+		<Using Include="System.Threading.Tasks" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<!-- Package metadata and build behavior specific to this project -->
+		<Description>Core abstractions and contracts for building multi-tenant SaaS applications</Description>
+
+		<!-- Packaging control
+			 - IsPackable set to true ensures this project is packable; set to false for test/internal projects. -->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IsPackable>true</IsPackable>
+
+		<!-- Code quality and packaging identity -->
+		<Nullable>enable</Nullable>
+		<PackageId>SaasSuite.Core</PackageId>
+
+		<!-- Target frameworks
+			 - List the supported frameworks. -->
+		<TargetFrameworks>net8.0;net9.0;net10.0;net7.0;net6.0</TargetFrameworks>
+	</PropertyGroup>
+
+</Project>

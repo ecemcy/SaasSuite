@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<!-- This specifies that the project uses the .NET Web SDK,
+		 which is tailored for ASP.NET Core web applications. -->
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<!-- Targeting .NET 8.0 runtime. Update this if you want to move
+			 to a newer framework version in the future. -->
+
+		<Nullable>enable</Nullable>
+		<!-- Enables nullable reference types, helping you catch potential
+			 null reference issues at compile time. -->
+
+		<ImplicitUsings>enable</ImplicitUsings>
+		<!-- Automatically includes common namespaces (like System, System.Linq, etc.)
+			 so you don't need to manually add them in every file. -->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Project references: These link to other projects in your solution.
+			 They allow you to reuse code across multiple projects. -->
+
+		<ProjectReference Include="..\..\src\SaasSuite.Core\SaasSuite.Core.csproj" />
+		<!-- Core project: Contains multi-tenant resolution (ITenantResolver), tenant context management (ITenantAccessor),
+			 tenant store abstractions (ITenantStore), and core middleware for tenant identification and routing. -->
+
+		<ProjectReference Include="..\..\src\SaasSuite.Features\SaasSuite.Features.csproj" />
+		<!-- Features project: Provides feature flag management and feature gating services (IFeatureService)
+			 for controlling access to plan-specific functionality. -->
+
+		<ProjectReference Include="..\..\src\SaasSuite.Metering\SaasSuite.Metering.csproj" />
+		<!-- Metering project: Handles usage tracking and consumption metering for billing and analytics purposes. -->
+
+		<ProjectReference Include="..\..\src\SaasSuite.Quotas\SaasSuite.Quotas.csproj" />
+		<!-- Quotas project: Manages quota definitions, enforcement, and consumption tracking (QuotaService)
+			 to enforce usage limits per tenant based on subscription plans. -->
+
+		<ProjectReference Include="..\..\src\SaasSuite.Seats\SaasSuite.Seats.csproj" />
+		<!-- Seats project: Manages user seat allocation and license enforcement (ISeatService)
+			 to control the number of active users per tenant. -->
+	</ItemGroup>
+</Project>

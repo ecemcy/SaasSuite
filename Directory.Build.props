@@ -1,0 +1,84 @@
+<Project>
+
+	<!-- Files to include in NuGet packages when a project is packable.
+		 These are placed at the package root so consumers can find them easily. -->
+	<ItemGroup Condition="'$(IsPackable)' == 'true'">
+		<None Include="$(MSBuildThisFileDirectory)assets\icon.png" Pack="true" PackagePath="/" />
+		<None Include="$(MSBuildThisFileDirectory)LICENSE" Pack="true" PackagePath="/" />
+		<None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
+
+	<!-- General build behavior
+		 Settings that affect overall build and packaging behavior across projects. -->
+	<PropertyGroup>
+		<!-- Controls whether symbol packages are produced alongside normal packages. -->
+		<IncludeSymbols>true</IncludeSymbols>
+
+		<!-- Symbol package format compatible with modern symbol servers. -->
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<!-- Compilation settings
+		 Language and compiler-related options. Keep these focused on code compilation semantics. -->
+	<PropertyGroup>
+		<!-- Produce XML documentation files for consumers and CI publishing. -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+		<!-- Disable implicit global usings here; explicit usings are declared per .csproj. -->
+		<ImplicitUsings>disable</ImplicitUsings>
+
+		<!-- Use the latest C# language features supported by the SDK. -->
+		<LangVersion>latest</LangVersion>
+
+		<!-- Suppress CS1591 (missing XML doc comments) while still generating docs. -->
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+
+		<!-- Enable nullable reference types for safer code. -->
+		<Nullable>enable</Nullable>
+
+		<!-- Keep warnings-as-errors off globally; treat nullable warnings as errors. -->
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<WarningsAsErrors>nullable</WarningsAsErrors>
+	</PropertyGroup>
+
+	<!-- Packaging metadata
+		 NuGet package metadata consumed by dotnet pack and CI pipelines. Keep values authoritative here. -->
+	<PropertyGroup>
+		<!-- Author and copyright information shown on NuGet.org and in package metadata. -->
+		<Authors>Stephen Murumba and Contributors</Authors>
+		<Copyright>Copyright © 2026 Stephen Murumba and Contributors</Copyright>
+
+		<!-- Project links and repository information. -->
+		<PackageProjectUrl>https://github.com/ecemcy/SaasSuite</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/ecemcy/SaasSuite</RepositoryUrl>
+
+		<!-- Files referenced above; these names must match the files included in the package. -->
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<!-- SPDX license expression for NuGet metadata. -->
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+
+		<!-- Whether consumers must accept the license to install the package. -->
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+		<!-- Tags to help discoverability on NuGet.org. -->
+		<PackageTags>saas;multitenancy;tenancy;billing;subscriptions;metering;quotas</PackageTags>
+
+		<!-- Central NuGet output: always resolves relative to this file, not $(SolutionDir) -->
+		<PackageOutputPath>$(MSBuildThisFileDirectory)nupkgs\</PackageOutputPath>
+	</PropertyGroup>
+
+	<!-- Versioning (numeric unified approach)
+		 Single authoritative numeric version used for assembly binding, file metadata and NuGet identity.
+		 Format: YY.M.D.Revision (example: 26.1.1.1).
+		 Keep AssemblyVersion numeric to preserve CLR binding semantics. -->
+	<PropertyGroup>
+		<AssemblyVersion>26.3.3.2</AssemblyVersion>
+		<FileVersion>$(AssemblyVersion)</FileVersion>
+		<InformationalVersion>$(AssemblyVersion)</InformationalVersion>
+		<Version>$(AssemblyVersion)</Version>
+	</PropertyGroup>
+
+</Project>

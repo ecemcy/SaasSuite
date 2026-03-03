@@ -1,0 +1,126 @@
+﻿[*.cs]
+
+########################################
+# StyleCop Spacing & Formatting Rules
+########################################
+
+# SA1009: Closing parenthesis should be spaced correctly
+dotnet_diagnostic.SA1009.severity = none
+
+# SA1010: Opening square brackets should be spaced correctly
+dotnet_diagnostic.SA1010.severity = none
+
+# SA1027: Use tabs correctly
+dotnet_diagnostic.SA1027.severity = none
+
+########################################
+# StyleCop Layout & Structure Rules
+########################################
+
+# SA1124: Do not use regions
+dotnet_diagnostic.SA1124.severity = none
+
+# SA1127: Generic type constraints should be on their own line
+dotnet_diagnostic.SA1127.severity = none
+
+# SA1200: Using directives should be placed correctly
+dotnet_diagnostic.SA1200.severity = none
+
+# SA1202: Elements should be ordered by access
+dotnet_diagnostic.SA1202.severity = none
+
+# SA1203: Constants should appear before fields
+dotnet_diagnostic.SA1203.severity = none
+
+# SA1204: Static elements should appear before instance elements
+dotnet_diagnostic.SA1204.severity = none
+
+# SA1206: Declaration keywords should follow order
+dotnet_diagnostic.SA1206.severity = none
+
+# SA1309: Field names should not begin with underscore
+dotnet_diagnostic.SA1309.severity = none
+
+# SA1402: File may only contain a single type
+dotnet_diagnostic.SA1402.severity = none
+
+# SA1413: Use trailing comma in multi-line initializers
+dotnet_diagnostic.SA1413.severity = none
+
+# SA1513: Closing brace should be followed by blank line
+dotnet_diagnostic.SA1513.severity = none
+
+# SA1514: Element documentation header should be preceded by blank line
+dotnet_diagnostic.SA1514.severity = none
+
+# SA1515: Single line comments must be preceded by blank line
+dotnet_diagnostic.SA1515.severity = none
+
+# SA1516: Elements should be separated by blank line
+dotnet_diagnostic.SA1516.severity = none
+
+########################################
+# StyleCop Documentation Rules
+########################################
+
+# SA1600: Require documentation headers
+dotnet_diagnostic.SA1600.severity = warning
+
+# SA1611: Parameter documentation
+dotnet_diagnostic.SA1611.severity = warning
+
+# SA1615: Parameter documentation
+dotnet_diagnostic.SA1615.severity = warning
+
+# SA1616: Parameter documentation
+dotnet_diagnostic.SA1616.severity = warning
+
+# SA1617: Exception documentation
+dotnet_diagnostic.SA1617.severity = warning
+
+# SA1618: Returns documentation
+dotnet_diagnostic.SA1618.severity = warning
+
+# SA1623: Enforce summary first, then params, then returns, then exceptions
+dotnet_diagnostic.SA1623.severity = warning
+
+# SA1633: File should have header
+dotnet_diagnostic.SA1633.severity = none
+
+# SA1649: File name should match first type name
+dotnet_diagnostic.SA1649.severity = none
+
+########################################
+# IDE Suggestions
+########################################
+
+# IDE0017: Simplify object initialization
+dotnet_diagnostic.IDE0017.severity = none
+
+# IDE0028: Simplify collection initialization
+dotnet_diagnostic.IDE0028.severity = none
+
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = none
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none
+
+# IDE0300: Simplify collection initialization
+dotnet_diagnostic.IDE0300.severity = none
+
+# IDE0301: Simplify collection initialization
+dotnet_diagnostic.IDE0301.severity = none
+
+# IDE0305: Simplify collection initialization
+dotnet_diagnostic.IDE0305.severity = none
+
+# IDE0306: Simplify collection initialization
+dotnet_diagnostic.IDE0306.severity = none
+
+########################################
+# .NET Code Analysis Rules
+########################################
+
+# CA1822: Mark members as static
+dotnet_diagnostic.CA1822.severity = none

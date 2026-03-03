@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Use the project-level README for NuGet display instead of the root README -->
+	<ItemGroup>
+		<None Remove="..\..\README.md" />
+		<None Include="README.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
+
+	<!-- Project-to-project references
+		 - Compile-time dependency on other solution projects. -->
+	<ItemGroup>
+		<ProjectReference Include="..\SaasSuite.Audit\SaasSuite.Audit.csproj" />
+		<ProjectReference Include="..\SaasSuite.Billing\SaasSuite.Billing.csproj" />
+		<ProjectReference Include="..\SaasSuite.Core\SaasSuite.Core.csproj" />
+		<ProjectReference Include="..\SaasSuite.Features\SaasSuite.Features.csproj" />
+		<ProjectReference Include="..\SaasSuite.Metering\SaasSuite.Metering.csproj" />
+		<ProjectReference Include="..\SaasSuite.Migration\SaasSuite.Migration.csproj" />
+		<ProjectReference Include="..\SaasSuite.Quotas\SaasSuite.Quotas.csproj" />
+		<ProjectReference Include="..\SaasSuite.Seats\SaasSuite.Seats.csproj" />
+		<ProjectReference Include="..\SaasSuite.Subscriptions\SaasSuite.Subscriptions.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<!-- Package metadata and build behavior specific to this project -->
+		<Description>Convenience meta-package that bundles the core SaaS building blocks. Includes SaasSuite.Core, SaasSuite.Features, SaasSuite.Seats, SaasSuite.Quotas, SaasSuite.Metering, SaasSuite.Billing, SaasSuite.Subscriptions, SaasSuite.Audit, and SaasSuite.Migration. Integrations live in separate packages and are not included.</Description>
+		<PackageTags>saas;multi-tenancy;feature-flags;seats;quotas;metering;usage;billing;subscriptions;audit;migration;dotnet;csharp</PackageTags>
+
+		<!-- Packaging control
+			 - IsPackable set to true ensures this project is packable; set to false for test/internal projects. -->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IsPackable>true</IsPackable>
+
+		<!-- Code quality and packaging identity -->
+		<Nullable>enable</Nullable>
+		<PackageId>SaasSuite</PackageId>
+
+		<!-- Target frameworks
+			 - List the supported frameworks. -->
+		<TargetFrameworks>net8.0;net9.0;net10.0;net7.0;net6.0</TargetFrameworks>
+	</PropertyGroup>
+
+</Project>

@@ -1,0 +1,124 @@
+@SampleWebApp_HostAddress = http://localhost:5001
+
+###############################################################################
+# SampleWebApp - Multi-Tenant SaaS API Test Requests
+###############################################################################
+#
+# Demo Tenants: "acme" (Professional plan) | "globex" (Starter plan)
+# Demo Users:
+#   - acme:  alice (owner), bob (admin), charlie (member)
+#   - globex: david (owner), eve (member)
+#
+# Use X-User-Id header to simulate authentication
+###############################################################################
+
+### 1. ROOT - API Information
+GET {{SampleWebApp_HostAddress}}/
+Accept: application/json
+
+###
+
+### 2. DASHBOARD - Acme tenant (Professional plan) as Alice (owner)
+GET {{SampleWebApp_HostAddress}}/t/acme/dashboard
+Accept: application/json
+X-User-Id: alice
+
+###
+
+### 3. DASHBOARD - Globex tenant (Starter plan) as David (owner)
+GET {{SampleWebApp_HostAddress}}/t/globex/dashboard
+Accept: application/json
+X-User-Id: david
+
+###
+
+### 4. REPORTS - List available report types (Acme - has advanced reports)
+GET {{SampleWebApp_HostAddress}}/t/acme/reports
+Accept: application/json
+X-User-Id: alice
+
+###
+
+### 5. REPORTS - List available report types (Globex - basic only)
+GET {{SampleWebApp_HostAddress}}/t/globex/reports
+Accept: application/json
+X-User-Id: david
+
+###
+
+### 6. CREATE BASIC REPORT - Success (within quota)
+POST {{SampleWebApp_HostAddress}}/t/acme/reports?type=basic
+Accept: application/json
+X-User-Id: alice
+
+###
+
+### 7. CREATE ADVANCED REPORT - Success (Acme has the feature)
+POST {{SampleWebApp_HostAddress}}/t/acme/reports?type=advanced
+Accept: application/json
+X-User-Id: alice
+
+###
+
+### 8. CREATE ADVANCED REPORT - Feature Gated (Globex doesn't have the feature)
+POST {{SampleWebApp_HostAddress}}/t/globex/reports?type=advanced
+Accept: application/json
+X-User-Id: david
+
+###
+
+### 9. BILLING - View subscription and plans (as owner)
+GET {{SampleWebApp_HostAddress}}/t/acme/billing
+Accept: application/json
+X-User-Id: alice
+
+###
+
+### 10. BILLING - View subscription (as member - no modify rights)
+GET {{SampleWebApp_HostAddress}}/t/acme/billing
+Accept: application/json
+X-User-Id: charlie
+
+###
+
+### 11. UPGRADE PLAN - Success (owner can upgrade)
+POST {{SampleWebApp_HostAddress}}/t/globex/billing/upgrade?plan=Professional
+Accept: application/json
+X-User-Id: david
+
+###
+
+### 12. UPGRADE PLAN - Authorization Failed (member cannot upgrade)
+POST {{SampleWebApp_HostAddress}}/t/acme/billing/upgrade?plan=Enterprise
+Accept: application/json
+X-User-Id: charlie
+
+###
+
+### 13. TEAM - View team members and seat usage
+GET {{SampleWebApp_HostAddress}}/t/acme/team
+Accept: application/json
+X-User-Id: alice
+
+###
+
+### 14. ACTIVITY - View recent audit events
+GET {{SampleWebApp_HostAddress}}/t/acme/activity
+Accept: application/json
+X-User-Id: alice
+
+###
+
+### 15. Different User Roles - Admin accessing dashboard
+GET {{SampleWebApp_HostAddress}}/t/acme/dashboard
+Accept: application/json
+X-User-Id: bob
+
+###
+
+### 16. Different User Roles - Member accessing dashboard
+GET {{SampleWebApp_HostAddress}}/t/acme/dashboard
+Accept: application/json
+X-User-Id: charlie
+
+###
