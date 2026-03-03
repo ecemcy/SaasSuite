@@ -1,0 +1,149 @@
+name: Publish NuGet Packages
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*.[0-9]*.[0-9]*.[0-9]*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g. v26.1.1.1 = vyy.M.d.build). The tag must already exist and point to a commit reachable from main.'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Determine version and ref
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+            REF="refs/tags/$VERSION"
+          else
+            VERSION="${{ github.ref_name }}"
+            REF="${{ github.ref }}"
+          fi
+
+          # Strip leading v if present
+          CLEAN_VERSION="${VERSION#v}"
+
+          if ! echo "$CLEAN_VERSION" | grep -qE '^[0-9]{2}\.(1[0-2]|[1-9])\.(3[01]|[12][0-9]|[1-9])\.[1-9][0-9]*$'; then
+            echo "Error: tag/version '$CLEAN_VERSION' does not match the required format yy.M.d.build." >&2
+            echo "Example valid tag: v26.1.1.1" >&2
+            exit 1
+          fi
+
+          echo "version=$CLEAN_VERSION" >> "$GITHUB_OUTPUT"
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "tag=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.version.outputs.ref }}
+          fetch-depth: 0
+
+      - name: Verify tag commit is reachable from main
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "Error: The tagged commit ($(git rev-parse HEAD)) is not reachable from 'main'." >&2
+            echo "Releases must be cut from main. Aborting." >&2
+            exit 1
+          fi
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore SaasSuite.sln
+
+      - name: Build
+        run: dotnet build SaasSuite.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test SaasSuite.sln --configuration Release --no-build --verbosity normal
+
+      - name: Pack (with symbols)
+        run: |
+          rm -rf nupkgs
+          dotnet pack SaasSuite.sln \
+            --configuration Release \
+            --no-build \
+            --output nupkgs \
+            /p:Version=${{ steps.version.outputs.version }} \
+            /p:IncludeSymbols=true \
+            /p:SymbolPackageFormat=snupkg \
+            /p:VersionSuffix=
+
+      - name: Ensure packages were created
+        run: |
+          if ! ls nupkgs/*.nupkg 1>/dev/null 2>&1; then
+            echo "Error: No .nupkg files found in nupkgs/. Aborting." >&2
+            ls -la nupkgs || true
+            exit 1
+          fi
+
+      - name: Publish to nuget.org (skip existing, attempt symbols non-fatal)
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          package_exists() {
+            pkg_path="$1"
+            base=$(basename "$pkg_path" .nupkg)
+            pkg_id="${base%.$VERSION}"
+            pkg_id_lc=$(echo "$pkg_id" | tr '[:upper:]' '[:lower:]')
+            ver_lc=$(echo "$VERSION" | tr '[:upper:]' '[:lower:]')
+            url="https://api.nuget.org/v3-flatcontainer/${pkg_id_lc}/${ver_lc}/${pkg_id_lc}.${ver_lc}.nupkg"
+            if curl -sI --fail "$url" >/dev/null 2>&1; then
+              return 0
+            else
+              return 1
+            fi
+          }
+
+          for pkg in nupkgs/*.nupkg; do
+            echo "Checking $pkg"
+            if package_exists "$pkg"; then
+              echo "Package already exists on nuget.org; skipping push: $pkg"
+              continue
+            fi
+
+            echo "Pushing $pkg"
+            dotnet nuget push "$pkg" \
+              --api-key "${NUGET_API_KEY}" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
+
+          if ls nupkgs/*.snupkg 1>/dev/null 2>&1; then
+            for sym in nupkgs/*.snupkg; do
+              echo "Attempting to push symbols $sym"
+              if ! dotnet nuget push "$sym" \
+                  --api-key "${NUGET_API_KEY}" \
+                  --source https://api.nuget.org/v3/index.json \
+                  --skip-duplicate; then
+                echo "Warning: symbol push failed for $sym — continuing. Check logs for details." >&2
+              fi
+            done
+          fi
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          release_name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
