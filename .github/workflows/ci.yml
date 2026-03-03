@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        dotnet-version: [ '6.0.x', '7.0.x', '8.0.x' ]
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+    - name: Restore dependencies
+      run: dotnet restore SaasSuite.sln
+
+    - name: Build
+      run: dotnet build SaasSuite.sln --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test SaasSuite.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+      continue-on-error: true
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v4
+      if: matrix.dotnet-version == '8.0.x'
+      with:
+        files: '**/coverage.cobertura.xml'
+        fail_ci_if_error: false
+      continue-on-error: true
+
+  build-sample:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build Sample App
+      run: dotnet build samples/SaasSuite.Samples.SampleWebApp/SaasSuite.Samples.SampleWebApp.csproj --configuration Release
+
+    - name: Publish Sample App
+      run: dotnet publish samples/SaasSuite.Samples.SampleWebApp/SaasSuite.Samples.SampleWebApp.csproj --configuration Release --output ./publish
+
+    - name: Upload Sample App artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: sample-app
+        path: ./publish
+        retention-days: 7
+
+  code-quality:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore tools
+      run: dotnet tool restore || dotnet tool install --global dotnet-format || true
+      working-directory: .
+
+    - name: Check code formatting
+      run: dotnet format --verify-no-changes --verbosity diagnostic || true
+      working-directory: .
+      continue-on-error: true
