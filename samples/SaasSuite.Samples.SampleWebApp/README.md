@@ -8,16 +8,16 @@ While the Admin samples (`SaasSuite.Samples.Admin.*`) demonstrate **platform ope
 
 ## Key Features Demonstrated
 
-### 1. 🎯 Tenant Resolution (Path-Based)
+### 1. Tenant Resolution (Path-Based)
 
 Tenants are resolved from the URL path: `/t/{tenantId}/...`
 
 ```bash
 # Acme Corporation tenant
-curl http://localhost:5000/t/acme/dashboard
+curl http://localhost:5001/t/acme/dashboard
 
 # Globex Inc tenant  
-curl http://localhost:5000/t/globex/dashboard
+curl http://localhost:5001/t/globex/dashboard
 ```
 
 **Alternative strategies** (documented but not implemented):
@@ -25,13 +25,13 @@ curl http://localhost:5000/t/globex/dashboard
 - **Header**: `X-Tenant-Id: acme`
 - **JWT Claim**: Extract from authenticated user token
 
-### 2. 🚦 Server-Side Feature Gating
+### 2. Server-Side Feature Gating
 
 Features are enforced **server-side**, not just hidden in UI.
 
 ```bash
 # Try to create advanced report without feature enabled
-curl -X POST "http://localhost:5000/t/globex/reports?type=advanced"
+curl -X POST "http://localhost:5001/t/globex/reports?type=advanced"
 
 # Response:
 {
@@ -44,13 +44,13 @@ curl -X POST "http://localhost:5000/t/globex/reports?type=advanced"
 
 **Key Pattern**: The endpoint returns `403 Forbidden` when feature is disabled, preventing unauthorized access even if UI is bypassed.
 
-### 3. 📊 Quota-Enforced Actions
+### 3. Quota-Enforced Actions
 
 Actions consume quotas with friendly error messages when exceeded.
 
 ```bash
 # Create a report (consumes quota)
-curl -X POST "http://localhost:5000/t/acme/reports?type=basic" \
+curl -X POST "http://localhost:5001/t/acme/reports?type=basic" \
   -H "X-User-Id: alice"
 
 # Response when quota exceeded:
@@ -64,44 +64,44 @@ curl -X POST "http://localhost:5000/t/acme/reports?type=basic" \
 
 **Key Pattern**: Server-side enforcement prevents quota bypass, with upgrade CTAs for conversion.
 
-### 4. 💳 Self-Serve Subscription Management
+### 4. Self-Serve Subscription Management
 
 Tenants can upgrade/downgrade their own plans.
 
 ```bash
 # View available plans
-curl http://localhost:5000/t/acme/billing
+curl http://localhost:5001/t/acme/billing
 
 # Upgrade plan (owner-only)
-curl -X POST "http://localhost:5000/t/acme/billing/upgrade?plan=Enterprise" \
+curl -X POST "http://localhost:5001/t/acme/billing/upgrade?plan=Enterprise" \
   -H "X-User-Id: alice"
 ```
 
 **Authorization**: Only tenant owners can modify subscriptions. Admins and members receive `403 Forbidden`.
 
-### 5. 👥 Tenant-Scoped Authorization
+### 5. Tenant-Scoped Authorization
 
 Users have roles within their tenant: **Owner**, **Admin**, **Member**.
 
 ```bash
 # As owner (alice) - can upgrade
-curl -X POST "http://localhost:5000/t/acme/billing/upgrade?plan=Professional" \
+curl -X POST "http://localhost:5001/t/acme/billing/upgrade?plan=Professional" \
   -H "X-User-Id: alice"
 # ✅ Success
 
 # As member (charlie) - cannot upgrade  
-curl -X POST "http://localhost:5000/t/acme/billing/upgrade?plan=Professional" \
+curl -X POST "http://localhost:5001/t/acme/billing/upgrade?plan=Professional" \
   -H "X-User-Id: charlie"
 # ❌ 403 Forbidden
 ```
 
-### 6. 📜 Tenant Audit Visibility
+### 6. Tenant Audit Visibility
 
 Tenants can view their own activity history.
 
 ```bash
 # View recent activity
-curl http://localhost:5000/t/acme/activity \
+curl http://localhost:5001/t/acme/activity \
   -H "X-User-Id: alice"
 
 # Response includes recent actions:
@@ -205,11 +205,11 @@ Returns recent audit events for the tenant.
 ## Running the Sample
 
 ```bash
-cd saas-net/samples/SampleWebApp
+cd samples/SaasSuite.Samples.SampleWebApp
 dotnet run
 ```
 
-The API will be available at `http://localhost:5000`.
+The API will be available at `http://localhost:5001`.
 
 ## Demo Tenants & Users
 
@@ -240,35 +240,35 @@ The API will be available at `http://localhost:5000`.
 
 ### 1. View Dashboard
 ```bash
-curl http://localhost:5000/t/acme/dashboard \
+curl http://localhost:5001/t/acme/dashboard \
   -H "X-User-Id: alice"
 ```
 
 ### 2. Create Basic Report (Always Available)
 ```bash
-curl -X POST "http://localhost:5000/t/acme/reports?type=basic" \
+curl -X POST "http://localhost:5001/t/acme/reports?type=basic" \
   -H "X-User-Id: alice"
 ```
 
 ### 3. Create Advanced Report (Feature-Gated)
 ```bash
 # Acme has feature - succeeds
-curl -X POST "http://localhost:5000/t/acme/reports?type=advanced" \
+curl -X POST "http://localhost:5001/t/acme/reports?type=advanced" \
   -H "X-User-Id: alice"
 
 # Globex doesn't have feature - fails with 403
-curl -X POST "http://localhost:5000/t/globex/reports?type=advanced" \
+curl -X POST "http://localhost:5001/t/globex/reports?type=advanced" \
   -H "X-User-Id: david"
 ```
 
 ### 4. Upgrade Subscription (Owner Only)
 ```bash
 # As owner - succeeds
-curl -X POST "http://localhost:5000/t/globex/billing/upgrade?plan=Professional" \
+curl -X POST "http://localhost:5001/t/globex/billing/upgrade?plan=Professional" \
   -H "X-User-Id: david"
 
 # As member - fails with 403
-curl -X POST "http://localhost:5000/t/globex/billing/upgrade?plan=Professional" \
+curl -X POST "http://localhost:5001/t/globex/billing/upgrade?plan=Professional" \
   -H "X-User-Id: eve"
 ```
 
@@ -276,7 +276,7 @@ curl -X POST "http://localhost:5000/t/globex/billing/upgrade?plan=Professional" 
 ```bash
 # Create 11 reports for Globex (limit is 10)
 for i in {1..11}; do
-  curl -X POST "http://localhost:5000/t/globex/reports?type=basic" \
+  curl -X POST "http://localhost:5001/t/globex/reports?type=basic" \
     -H "X-User-Id: david"
 done
 # 11th request returns 429 with upgrade CTA
@@ -284,13 +284,13 @@ done
 
 ### 6. View Activity Log
 ```bash
-curl http://localhost:5000/t/acme/activity \
+curl http://localhost:5001/t/acme/activity \
   -H "X-User-Id: alice"
 ```
 
 ### 7. View Team & Seats
 ```bash
-curl http://localhost:5000/t/acme/team \
+curl http://localhost:5001/t/acme/team \
   -H "X-User-Id: bob"
 ```
 
@@ -299,9 +299,9 @@ curl http://localhost:5000/t/acme/team \
 ### Tenant Resolution
 
 **Path-based** (implemented): `/t/{tenantId}/...`
-- ✅ Easy to demo and test
-- ✅ Works without DNS configuration
-- ✅ Clear tenant isolation in URLs
+- Easy to demo and test
+- Works without DNS configuration
+- Clear tenant isolation in URLs
 
 **Alternatives** (documented):
 - **Subdomain**: `{tenantId}.myapp.com` - Common for SaaS products
@@ -389,11 +389,11 @@ This sample demonstrates the **separation of concerns** in multi-tenant SaaS:
 
 ## Related Samples
 
-- **SaasSuite.Samples.Admin.RazorPages** - Minimal admin reference
-- **SaasSuite.Samples.Admin.Mvc** - Enterprise admin with confirmations
-- **SaasSuite.Samples.Admin.Blazor** - Live operations dashboard
-- **SaasSuite.Samples.Admin.React** - API-first admin with visualizations
+- **[SaasSuite.Samples.Admin.RazorPages](../SaasSuite.Samples.Admin.RazorPages/README.md)** - Minimal admin reference
+- **[SaasSuite.Samples.Admin.Mvc](../SaasSuite.Samples.Admin.Mvc/README.md)** - Enterprise admin with confirmations
+- **[SaasSuite.Samples.Admin.Blazor](../SaasSuite.Samples.Admin.Blazor/README.md)** - Live operations dashboard
+- **[SaasSuite.Samples.Admin.React](../SaasSuite.Samples.Admin.React/README.md)** - API-first admin with visualizations
 
 ## License
 
-Part of the SaasSuite project.
+Part of the SaasSuite project. See the [LICENSE](../../LICENSE) file in the repository root for details.
