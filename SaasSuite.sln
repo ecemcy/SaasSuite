@@ -67,6 +67,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compliance", "Compliance", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaasSuite.Compliance", "src\SaasSuite.Compliance\SaasSuite.Compliance.csproj", "{67F744D8-A15E-D9C5-E1DF-7FF58B6EF1E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaasSuite.DataProtection", "src\SaasSuite.DataProtection\SaasSuite.DataProtection.csproj", "{ECD39F9C-C316-B09F-4595-2E526F85EE3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,10 @@ Global
 		{67F744D8-A15E-D9C5-E1DF-7FF58B6EF1E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67F744D8-A15E-D9C5-E1DF-7FF58B6EF1E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67F744D8-A15E-D9C5-E1DF-7FF58B6EF1E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECD39F9C-C316-B09F-4595-2E526F85EE3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECD39F9C-C316-B09F-4595-2E526F85EE3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECD39F9C-C316-B09F-4595-2E526F85EE3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECD39F9C-C316-B09F-4595-2E526F85EE3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -169,6 +175,7 @@ Global
 		{C27572D6-B4AA-D9F5-DCBD-F311BEBF4FC5} = {6959D5FB-9DF1-4075-806A-9BB9554FB0B1}
 		{E125F044-16A1-47F8-8771-04E2895C74BD} = {6959D5FB-9DF1-4075-806A-9BB9554FB0B1}
 		{67F744D8-A15E-D9C5-E1DF-7FF58B6EF1E1} = {E125F044-16A1-47F8-8771-04E2895C74BD}
+		{ECD39F9C-C316-B09F-4595-2E526F85EE3B} = {E125F044-16A1-47F8-8771-04E2895C74BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {84158AAC-4F83-43EF-A386-261C269BC018}

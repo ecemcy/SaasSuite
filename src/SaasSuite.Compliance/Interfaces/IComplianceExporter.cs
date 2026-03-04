@@ -44,7 +44,7 @@ namespace SaasSuite.Compliance.Interfaces
 		/// Optional configuration controlling the export format, included data categories, compression, and audit log inclusion.
 		/// If <see langword="null"/>, default options are used (JSON format, compressed, with audit logs).
 		/// </param>
-		/// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete. Defaults to <see cref="CancellationToken.None"/>.</param>
+		/// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
 		/// <returns>
 		/// A task that represents the asynchronous operation. The task result contains a <see cref="DataExportManifest"/>
 		/// describing the exported data, including file locations, sizes, categories, and metadata.
